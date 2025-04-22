@@ -16,12 +16,6 @@ on:
       helm-release-name:
         type: string
         default: todoapp-development
-      dbport:
-        type: string
-        default: "3306"
-      nodeport:
-        type: string
-        default: "30007"
 
 
 jobs:
@@ -66,13 +60,13 @@ jobs:
         --set mysql.configs.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
         --set mysql.configs.MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
         --set mysql.namespace="mysql-${{ inputs.environment }}" \
-        --set mysql.port="mysql-${{ inputs.dbport }}" \
+        --set mysql.port=${{ vars.DB_PORT }} \
         --set todoapp.secrets.SECRET_KEY="${{ secrets.SECRET_KEY }}" \
         --set todoapp.secrets.DB_NAME="${{ secrets.DB_NAME }}" \
         --set todoapp.secrets.DB_USER="${{ secrets.DB_USER }}" \
         --set todoapp.secrets.DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
         --set todoapp.secrets.DB_HOST="${{ secrets.DB_HOST }}" \
         --set todoapp.image.version="${{ github.sha }}" \
-        --set todoapp.nodeport="${{ inputs.nodeport }}" \
+        --set todoapp.nodeport=${{ vars.NODE_PORT }} \
         --set todoapp.namespace="todoapp-${{ inputs.environment }}"
 
