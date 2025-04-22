@@ -16,6 +16,12 @@ on:
       helm-release-name:
         type: string
         default: todoapp-development
+      dbport:
+        type: number
+        default: 3306
+      nodeport:
+        type: number
+        default: 30007  
 
 
 jobs:
