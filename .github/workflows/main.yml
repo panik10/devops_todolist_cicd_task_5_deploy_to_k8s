@@ -129,6 +129,8 @@ jobs:
       environment: development
       version: ${{ github.sha }}
       helm-release-name: todoapp-development
+      nodeport: 30007
+      dbport: 3306
 
   deploy-helm-staging:
     name: deploy helm
@@ -140,3 +142,5 @@ jobs:
       version: ${{ github.sha }}
       helm-values-path: ./todoapp/values/stg.yaml
       helm-release-name: todoapp-staging
+      nodeport: 30008
+      dbport: 3308

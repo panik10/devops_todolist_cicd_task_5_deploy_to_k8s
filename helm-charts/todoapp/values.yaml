@@ -4,11 +4,15 @@ mysql:
     MYSQL_USER: app_user
     MYSQL_PASSWORD: 1234
 
+  port: 3306
+
 todoapp:
   namespace: todoapp
   image:
     repository: ikulyk404/todoapp
     tag: "4.0.1"
+
+  nodeport: 30007
 
   resources:
     requests:
