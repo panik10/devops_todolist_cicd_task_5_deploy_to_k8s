@@ -3,66 +3,66 @@ run-name: ${{ github.actor }} - ${{ github.ref_name }}
 on:
   workflow_call:
     inputs:
-        environment:
-            required: true
-            description: 'Env to deploy to'
-            type: string
-        version:
-            required: true
-            type: string
-        helm-values-path:
-            type: string
-            default: './todoapp/values.yaml'
-        helm-release-name:
-            type: string
-            default: todoapp-development
+      environment:
+        required: true
+        description: 'Env to deploy to'
+        type: string
+      version:
+        required: true
+        type: string
+      helm-values-path:
+        type: string
+        default: './todoapp/values.yaml'
+      helm-release-name:
+        type: string
+        default: todoapp-development
 
 
 jobs:
-    deploy-helm:
-        name: ${{ inputs.environment }}
-        runs-on: ubuntu-latest
-        environment: ${{ inputs.environment }}
+  deploy-helm:
+    name: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
-        steps:
-        - uses: actions/download-artifact@v4
-          with:
-                name: helm-package
-                path: .
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+            name: helm-package
+            path: .
 
-        - uses: actions/download-artifact@v4
-          with:
-                name: helm-artifacts
-                path: .
+    - uses: actions/download-artifact@v4
+      with:
+            name: helm-artifacts
+            path: .
 
-        - name: set up helm
-          uses: azure/setup-helm@v4.2.0
+    - name: set up helm
+      uses: azure/setup-helm@v4.2.0
 
-        - name: set up kubectl
-          uses: azure/setup-kubectl@v4
+    - name: set up kubectl
+      uses: azure/setup-kubectl@v4
 
-        - name: login aks
-          uses: azure/login@v2
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: login aks
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-        - name: set context to aks
-          uses: azure/aks-set-context@v4
-          with:
-            cluster-name: ${{ vars.AZURE_CLUSTER_NAME }}
-            resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+    - name: set context to aks
+      uses: azure/aks-set-context@v4
+      with:
+        cluster-name: ${{ vars.AZURE_CLUSTER_NAME }}
+        resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
 
-        - name: deploy helm to development env
-          run: |
-            helm upgrade --install --atomic --wait --timeout 3600s --debug ${{ inputs.helm-release-name }} ./todoapp-*.tgz \
-            -f ${{ inputs.helm-values-path }} \
-            --set mysql.configs.MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" \
-            --set mysql.configs.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
-            --set mysql.configs.MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
-            --set todoapp.secrets.SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-            --set todoapp.secrets.DB_NAME="${{ secrets.DB_NAME }}" \
-            --set todoapp.secrets.DB_USER="${{ secrets.DB_USER }}" \
-            --set todoapp.secrets.DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-            --set todoapp.secrets.DB_HOST="${{ secrets.DB_HOST }}" \
-            --set todoapp.image.version="${{ github.sha }}"
+    - name: deploy helm to development env
+      run: |
+        helm upgrade --install --atomic --wait --timeout 3600s --debug ${{ inputs.helm-release-name }} ./todoapp-*.tgz \
+        -f ${{ inputs.helm-values-path }} \
+        --set mysql.configs.MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" \
+        --set mysql.configs.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
+        --set mysql.configs.MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
+        --set todoapp.secrets.SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+        --set todoapp.secrets.DB_NAME="${{ secrets.DB_NAME }}" \
+        --set todoapp.secrets.DB_USER="${{ secrets.DB_USER }}" \
+        --set todoapp.secrets.DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+        --set todoapp.secrets.DB_HOST="${{ secrets.DB_HOST }}" \
+        --set todoapp.image.version="${{ github.sha }}"
 
