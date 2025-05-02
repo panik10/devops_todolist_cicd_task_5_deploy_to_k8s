@@ -69,4 +69,3 @@ jobs:
         --set todoapp.image.version="${{ github.sha }}" \
         --set todoapp.nodeport=${{ vars.NODE_PORT }} \
         --set todoapp.namespace="todoapp-${{ inputs.environment }}"
-
