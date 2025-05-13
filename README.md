@@ -6,43 +6,24 @@ To complete this task, you will need:
 - CSS | [Skeleton](http://getskeleton.com/)
 - JS  | [jQuery](https://jquery.com/)
 
-## Explore
+## Summary
 
-Follow these steps to get the application up and running on your local machine (requires Python 3.8 or higher due to compatibility with Django 4):
+In this project, I extended the GitHub Actions workflow by integrating Docker and Kubernetes deployment to a local kind cluster using Helm:
 
-```
-pip install -r requirements.txt
-```
+    Added DockerHub credentials (username and password) to the repository secrets.
 
-Create a database schema:
+    Updated the DockerImageName variable with my DockerHub repository.
 
-```
-python manage.py migrate
-```
+    Created a reusable workflow to deploy to a kind Kubernetes cluster:
 
-And then start the server (default is <http://localhost:8000>):
+        - The workflow supports deploying to multiple environments via inputs.
 
-```
-python manage.py runserver
-```
+        - Spins up a local cluster using cluster.yml.
 
-Now you can browse the [API](http://localhost:8000/api/) or start on the [landing page](http://localhost:8000/).
+        - Includes helm install --dry-run for validation.
 
-## Task
+        - Uses helm upgrade --install --atomic to ensure safe deployments.
 
-Extend the project's GitHub Actions workflow by integrating Docker to build and push images to DockerHub. 
-This CI/CD enhancement involves several key tasks:
+        - All sensitive data is stored in environment secrets.
 
-1. Update your forked repository with your DockerHub username and password.
-    1. Add corresponding secrets to the repository.
-2. Update `DockerImageName` with your DockerHub image repository name.
-3. Add a resubable workflow to deploy to `kind` kubernetes cluster.
-    1. Reusable workflow should allow to deploy to different `environments`.
-    1. Add steps to spin up a `kind` cluster from a `cluster.yml` file.
-    1. Job should contain a step with `helm install --dry-run` command.
-    1. Job should contain a step to run `helm upgrade --install` command. This command should be `atomic` and should not allow to deploy a broken release.
-    1. All secrets should be stored in the environment secrets.
-4. Call reusable workflow to deploy to `development` environment.
-5. Call reusable workflow to deploy to `staging` environment.
-6. Create a pull request with the changes.
-7. Pull request's description should also contain a reference to a successful workflow run.
+    Also, utilized the reusable workflow to deploy to both development and staging environments.
